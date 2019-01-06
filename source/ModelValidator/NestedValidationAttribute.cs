@@ -52,7 +52,7 @@ namespace Infra.ModelValidator
 
                     index++;
                 }
-                
+
                 var isAnythingInvalid = compositeResults.Results.Any();
 
                 return isAnythingInvalid ? compositeResults : ValidationResult.Success;

@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Infra.ModelValidator;
+﻿using Infra.ModelValidator;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading;
 using UnitTestModelValidator.ModelForValidation;
 
 namespace UnitTestModelValidator
@@ -28,17 +30,19 @@ namespace UnitTestModelValidator
         ///</summary>
         public TestContext TestContext
         {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
+            get { return testContextInstance; }
+            set { testContextInstance = value; }
         }
 
         #region 其他測試屬性
+
+        [AssemblyInitialize()]
+        public static void AssemblyInit(TestContext testContext)
+        {
+            var culture = CultureInfo.CreateSpecificCulture("en-US");
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+        }
 
         //
         // 您可以使用下列其他屬性撰寫您的測試:
@@ -71,9 +75,9 @@ namespace UnitTestModelValidator
                 Age = 999,
                 Sons = new List<Son>
                 {
-                    new Son{Age=0},
-                    new Son{Name=string.Empty, Age=200},
-                    new Son{Name="91", Age=300},
+                    new Son {Age = 0},
+                    new Son {Name = string.Empty, Age = 200},
+                    new Son {Name = "91", Age = 300},
                 }
             };
 
@@ -86,11 +90,14 @@ namespace UnitTestModelValidator
             Assert.AreEqual(6, validator.ValidationResults.Count);
 
             Assert.AreEqual("The field Age must be between 1 and 130.", validator.ValidationResults[0].ErrorMessage);
-            Assert.AreEqual("The field Sons[0].Age must be between 1 and 130.", validator.ValidationResults[1].ErrorMessage);
+            Assert.AreEqual("The field Sons[0].Age must be between 1 and 130.",
+                validator.ValidationResults[1].ErrorMessage);
             Assert.AreEqual("The Sons[0].Name field is required.", validator.ValidationResults[2].ErrorMessage);
-            Assert.AreEqual("The field Sons[1].Age must be between 1 and 130.", validator.ValidationResults[3].ErrorMessage);
+            Assert.AreEqual("The field Sons[1].Age must be between 1 and 130.",
+                validator.ValidationResults[3].ErrorMessage);
             Assert.AreEqual("The Sons[1].Name field is required.", validator.ValidationResults[4].ErrorMessage);
-            Assert.AreEqual("The field Sons[2].Age must be between 1 and 130.", validator.ValidationResults[5].ErrorMessage);
+            Assert.AreEqual("The field Sons[2].Age must be between 1 and 130.",
+                validator.ValidationResults[5].ErrorMessage);
         }
 
         [TestMethod]
@@ -121,23 +128,23 @@ namespace UnitTestModelValidator
                 {
                     new Father
                     {
-                        Name= "Father1",
-                        Age=81,
+                        Name = "Father1",
+                        Age = 81,
                         Sons = new List<Son>
                         {
-                            new Son{Name="91", Age=300},
-                            new Son{Name = "92", Age= 11},
-                            new Son{Name = "93", Age= 202},
+                            new Son {Name = "91", Age = 300},
+                            new Son {Name = "92", Age = 11},
+                            new Son {Name = "93", Age = 202},
                         }
                     },
                     new Father
                     {
-                        Age=82,
+                        Age = 82,
                         Sons = new List<Son>
                         {
-                            new Son{Name="F2_1", Age=-1},
-                            new Son{Name = "F2_2", Age= -2},
-                            new Son{Name = "F2_3", Age= 4},
+                            new Son {Name = "F2_1", Age = -1},
+                            new Son {Name = "F2_2", Age = -2},
+                            new Son {Name = "F2_3", Age = 4},
                         }
                     },
                 }
